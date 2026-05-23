@@ -1,14 +1,13 @@
-import { Pool } from "pg"
+import { Pool } from "pg";
 import config from "../config/index.js";
 
-
 export const pool = new Pool({
-    connectionString: config.Connection_string
-})
+  connectionString: config.Connection_string,
+});
 
 export const initDB = async () => {
-    try {
-        await pool.query(`
+  try {
+    await pool.query(`
             CREATE TABLE IF NOT EXISTS users(
             id SERIAL PRIMARY KEY,
             name VARCHAR(20),
@@ -16,12 +15,13 @@ export const initDB = async () => {
             password TEXT NOT NULL,
             is_active BOOLEAN DEFAULT true,
             age INT,
+            role VARCHAR(10) DEFAULT 'user',
             created_at TIMESTAMP DEFAULT NOW(),
             update_at TIMESTAMP DEFAULT NOW()
             )
-            `)
+            `);
 
-        await pool.query(`
+    await pool.query(`
        CREATE TABLE IF NOT EXISTS profiles(
         id SERIAL PRIMARY KEY,
         user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
@@ -32,13 +32,10 @@ export const initDB = async () => {
         created_at TIMESTAMP DEFAULT NOW(),
         update_at TIMESTAMP DEFAULT NOW()
     )
-`)
+`);
 
-
-        console.log("Data Base Connected Successfully?");
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
+    console.log("Data Base Connected Successfully?");
+  } catch (error) {
+    console.log(error);
+  }
+};
